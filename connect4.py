@@ -19,7 +19,7 @@ def drop_peace(board, row, col, piece):
 
 # Sprawdzenie czy podana kolumna jest dostępna
 def is_valid_location(board, col):
-    return board[5][col] == 0
+    return board[ROW_COUNT - 1][col] == 0
 
 # Sprawdzenie czy już są jakieś krążki w kolumnie i zwrócenie pierwszego wolnego wiersza
 def get_next_open_row(board, col):
@@ -31,6 +31,33 @@ def get_next_open_row(board, col):
 # Wyświetlenie planszy , odwrócenie flip ponieważ krążki są dodawane od dołu a w macierzy odwrotne liczenie wierszy i kolumn
 def print_board(board):
     print(np.flip(board, 0))
+
+# Sprawdzenie czy gracz wygrał
+def winning_move(board, piece):
+    # Sprawdzenie wierszy
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT):
+            if board[r][c] == piece and board[r][c+1] == piece and board[r][c+2] == piece and board[r][c+3] == piece:
+                return True
+
+    # Sprawdzenie kolumn
+    for c in range(COLUMN_COUNT):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c] == piece and board[r+2][c] == piece and board[r+3][c] == piece:
+                return True
+
+    # Sprawdzenie linii prawoukośnych
+    for c in range(COLUMN_COUNT-3):
+        for r in range(ROW_COUNT-3):
+            if board[r][c] == piece and board[r+1][c+1] == piece and board[r+2][c+2] == piece and board[r+3][c+3] == piece:
+                return True
+
+    # Sprawdzenie linii lewoukośnych
+    for c in range(COLUMN_COUNT-3):
+        for r in range(3,ROW_COUNT):
+            if board[r][c] == piece and board[r-1][c+1] == piece and board[r-2][c+2] == piece and board[r-3][c+3] == piece:
+                return True
+
 
 
 
@@ -48,6 +75,10 @@ while running:
             row = get_next_open_row(board, col)
             drop_peace(board, row, col, 1)
 
+            if winning_move(board, 1):
+                print("Player 1 wygrał")
+                running = False
+
 
 
     # Player 2 Zapytanie o kolumnę do której chce wrzucić krążek
@@ -57,6 +88,12 @@ while running:
         if is_valid_location(board, col):
             row = get_next_open_row(board, col)
             drop_peace(board, row, col, 2)
+
+            if winning_move(board, 2):
+                print("Player 2 wygrał")
+                running = False
+
+
 
     print_board(board)
 
